@@ -6,8 +6,8 @@ spring:
   jpa:
     generate-ddl: true
     database: mysql
-#    hibernate:
-#      ddl-auto: update
+    #    hibernate:
+    #      ddl-auto: update
     show-sql: true
 #    properties:
 #      hibernate.format_sql: true
@@ -19,3 +19,10 @@ hibernate:
 logging:
   level:
     org.springframework.security: debug
+
+# JWT Config
+app:
+  jwt:
+    secretKey: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
+    tokenPrefix: Bearer
+    tokenExpirationAfterDays: 10
