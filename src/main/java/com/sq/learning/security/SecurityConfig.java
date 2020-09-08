@@ -1,5 +1,6 @@
 package com.sq.learning.security;
 
+import com.google.common.net.HttpHeaders;
 import com.sq.learning.authentication.ApplicationUserService;
 import com.sq.learning.jwt.JwtAuthenticationFilter;
 import com.sq.learning.jwt.JwtConfig;
@@ -46,7 +47,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .antMatchers("/css/*", "/images/*").permitAll()
         .anyRequest()
-        .authenticated();
+        .authenticated()
+        .and()
+        .formLogin()
+        .loginPage("/login")
+        .permitAll()
+        .defaultSuccessUrl("/index", true)
+        .and()
+        .logout().logoutUrl("/logout").logoutSuccessUrl("/login")
+        .deleteCookies(HttpHeaders.AUTHORIZATION, "JSESSIONID").invalidateHttpSession(true);
 
 
   }

@@ -1,6 +1,7 @@
 package com.sq.learning.jwt;
 
 import com.google.common.base.Strings;
+import com.google.common.net.HttpHeaders;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,14 +36,22 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
-
-    if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader
-        .startsWith(jwtConfig.getTokenPrefix())) {
+    // check cookies
+    String token = null;
+    if (request.getCookies() != null) {
+      for (Cookie cookie : request.getCookies()) {
+        if (HttpHeaders.AUTHORIZATION.equals(cookie.getName())) {
+          token = cookie.getValue();
+        }
+      }
+    }
+    if (Strings.isNullOrEmpty(token) && authorizationHeader != null) {
+      token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+    }
+    if (Strings.isNullOrEmpty(token)) {
       filterChain.doFilter(request, response);
       return;
     }
-
-    String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
 
     try {
 

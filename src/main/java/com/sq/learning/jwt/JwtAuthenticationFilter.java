@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   public Authentication attemptAuthentication(HttpServletRequest request,
       HttpServletResponse response) throws AuthenticationException {
     try {
-
-      AuthRequest authenticationRequest = new ObjectMapper()
-          .readValue(request.getInputStream(), AuthRequest.class);
+      AuthRequest authenticationRequest;
+      String username = request.getParameter("username");
+      String password = request.getParameter("password");
+      if (username != null && password != null) {
+        authenticationRequest = new AuthRequest(username, password);
+      } else {
+        authenticationRequest = new ObjectMapper()
+            .readValue(request.getInputStream(), AuthRequest.class);
+      }
 
       Authentication authentication = new UsernamePasswordAuthenticationToken(
           authenticationRequest.getUsername(), authenticationRequest.getPassword());
@@ -58,6 +65,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     response
         .addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + " " + token);
+    response.addCookie(new Cookie(jwtConfig.getAuthorizationHeader(), token));
 
   }
 }
