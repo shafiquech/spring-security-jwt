@@ -26,3 +26,18 @@ app:
     secretKey: securesecuresecuresecuresecuresecuresecuresecuresecuresecuresecure
     tokenPrefix: Bearer
     tokenExpirationAfterDays: 10
+security:
+  oauth2:
+    client:
+      client-id: 151374428837-jpnaa79bu3evqiuil8e9lvcgtk58hh5h.apps.googleusercontent.com
+      client-secret: nX0REN_8Uf5So4o3_rcHRetr
+      accessTokenUri: https://www.googleapis.com/oauth2/v3/token
+      userAuthorizationUri: https://accounts.google.com/o/oauth2/auth
+      tokenName: oauth_token
+      authenticationScheme: query
+      clientAuthenticationScheme: form
+      scope: profile
+    resource:
+      userInfoUri: https://www.googleapis.com/userinfo/v2/me
+      preferTokenInfo: false
+

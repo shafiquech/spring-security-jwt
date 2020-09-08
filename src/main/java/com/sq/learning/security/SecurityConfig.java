@@ -6,6 +6,7 @@ import com.sq.learning.jwt.JwtConfig;
 import com.sq.learning.jwt.JwtTokenVerifier;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
+@EnableOAuth2Sso
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final PasswordEncoder passwordEncoder;
@@ -29,20 +31,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final SecretKey secretKey;
   private final JwtConfig jwtConfig;
 
-  @Override
+  /*@Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.authenticationProvider(daoAuthenticationProvider());
-  }
+  }*/
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
         .csrf().disable()
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-        .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-        .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtAuthenticationFilter.class)
+        //.sessionManagement()
+        //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        //.and()
+        //.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+        //.addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtAuthenticationFilter.class)
         .authorizeRequests()
         .antMatchers("/css/*", "/images/*").permitAll()
         .anyRequest()
@@ -50,8 +52,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
   }
+ /* @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
+        .csrf()
+        .disable()
+        .antMatcher("/**")
+        .authorizeRequests()
+        .antMatchers("/css/*", "/images/*")
+        .permitAll()
+        .anyRequest()
+        .authenticated();
+  }*/
 
-  @Bean
+/*  @Bean
   DaoAuthenticationProvider daoAuthenticationProvider() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
     provider.setPasswordEncoder(passwordEncoder);
@@ -63,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
-  }
+  }*/
 
 
 }
